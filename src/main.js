@@ -38,15 +38,22 @@ function calculateBonusByProfit(index, total, seller) {
  */
 function analyzeSalesData(data, options) {
   if (!data) throw new Error("Нет входных данных");
-  if (!Array.isArray(data.sellers)) throw new Error("Нет массива sellers");
-  if (!Array.isArray(data.products)) throw new Error("Нет массива products");
-  if (!Array.isArray(data.purchase_records))
-    throw new Error("Нет массива purchase_records");
+  if (!Array.isArray(data.sellers) || data.sellers.length === 0)
+    throw new Error("Нет массива sellers или он пустой");
+  if (!Array.isArray(data.products) || data.products.length === 0)
+    throw new Error("Нет массива products или он пустой");
+  if (
+    !Array.isArray(data.purchase_records) ||
+    data.purchase_records.length === 0
+  )
+    throw new Error("Нет массива purchase_records или он пустой");
 
-  const { calculateBonus } = options || {};
-  if (typeof calculateBonus !== "function") {
-    throw new Error("Не передана функция для расчёта бонусов");
-  }
+  const { calculateRevenue, calculateBonus } = options || {};
+  if (
+    typeof calculateRevenue !== "function" ||
+    typeof calculateBonus !== "function"
+  )
+    throw new Error("Не переданы функции для расчётов");
 
   const sellerStats = data.sellers.map((seller) => ({
     id: seller.id,
